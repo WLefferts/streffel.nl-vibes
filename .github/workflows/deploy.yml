@@ -13,7 +13,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull and restart
-        working-directory: ~/streffel.nl-vibes
+        working-directory: /streffel.nl-vibes
         run: |
           git pull --ff-only
           docker compose up -d --build --remove-orphans
