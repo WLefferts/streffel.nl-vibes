@@ -1,13 +1,29 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { api } from '../api';
 import { useAuth } from '../auth';
 import type { Post } from '../types';
 
-export default function PostCard({ post }: { post: Post }) {
+export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (id: string) => void }) {
   const { isOwner } = useAuth();
+  const [busy, setBusy] = useState(false);
   const when = new Date(post.publishedAt);
   const date = when.toLocaleString('en-GB', { dateStyle: 'long', timeStyle: 'short' });
   const n = post.images.length;
   const layout = n >= 6 ? 'many' : String(n);
+
+  async function handleDelete() {
+    if (!confirm('Delete this post and its images?')) return;
+    setBusy(true);
+    try {
+      await api.deletePost(post.id);
+      onDelete?.(post.id);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <article className="content">
@@ -32,7 +48,14 @@ export default function PostCard({ post }: { post: Post }) {
           </a>
         ))}
       </div>
-      {isOwner && <Link className="btn ghost" to={`/edit/${post.id}`}>Edit post</Link>}
+      {isOwner && (
+        <div className="admin-bar">
+          <Link className="btn ghost" to={`/edit/${post.id}`}>Edit post</Link>
+          <button type="button" className="btn danger" disabled={busy} onClick={handleDelete}>
+            {busy ? 'Deleting…' : 'Delete post'}
+          </button>
+        </div>
+      )}
     </article>
   );
 }

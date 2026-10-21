@@ -11,6 +11,10 @@ export default function Home() {
     api.posts().then(setPosts).catch((e: Error) => setError(e.message));
   }, []);
 
+  const handleDelete = (id: string) => {
+    setPosts((current) => current?.filter((post) => post.id !== id) ?? null);
+  };
+
   if (error) return <p className="error">Could not load posts: {error}</p>;
   if (!posts) return <p className="notice">Loading posts…</p>;
   if (posts.length === 0) return <p className="notice">No posts yet.</p>;
@@ -18,7 +22,7 @@ export default function Home() {
   return (
     <>
       {posts.map((p) => (
-        <PostCard key={p.id} post={p} />
+        <PostCard key={p.id} post={p} onDelete={handleDelete} />
       ))}
     </>
   );
