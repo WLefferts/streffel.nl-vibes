@@ -46,6 +46,7 @@ main { width: 100%; }
 }
 .intro { margin: 32px 0 8px; }
 .content { margin: 8px 0; }
+.content ul { width: fit-content; max-width: 66%; padding-left: 1.5em; text-align: left; }
 
 .date { opacity: 0.7; font-size: 0.9rem; }
 
@@ -101,6 +102,6 @@ footer { margin: 32px 0; opacity: 0.5; font-size: 0.85rem; }
 
 @media (max-width: 820px) {
   body { margin: 0; }
-  p, h1, label { max-width: 90%; }
+  p, h1, label, .content ul { max-width: 90%; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }

@@ -99,7 +99,7 @@ export default function Editor() {
       <label>
         Story
         <textarea rows={8} value={body} onChange={(e) => setBody(e.target.value)} />
-        <small>Leave a blank line between paragraphs.</small>
+        <small>Leave a blank line between paragraphs. Start a line with - to make a bullet point.</small>
       </label>
 
       {existing.length > 0 && (
