@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH}
+      SESSION_SECRET: ${SESSION_SECRET}
+    volumes:
+      - ./data:/data
+    # No "ports:" on purpose. The app is only reachable from the tunnel container
+    # over the internal compose network, never from your LAN or the internet.
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN}
+    depends_on:
+      - app
