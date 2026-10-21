@@ -33,6 +33,14 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS images_post ON images(post_id);
 `);
 
+/** Migration: editable post timestamp (the feed is sorted by this). */
+const postCols = db.prepare('PRAGMA table_info(posts)').all() as { name: string }[];
+if (!postCols.some((c) => c.name === 'published_at')) {
+  db.exec('ALTER TABLE posts ADD COLUMN published_at INTEGER');
+  db.exec('UPDATE posts SET published_at = created_at');
+}
+db.exec('CREATE INDEX IF NOT EXISTS posts_published ON posts(published_at)');
+
 /** Daily consistent snapshot of the database (images are write-once files, back those up with rsync). */
 function backup() {
   const file = path.join(config.backupsDir, `blog-${new Date().toISOString().slice(0, 10)}.sqlite`);

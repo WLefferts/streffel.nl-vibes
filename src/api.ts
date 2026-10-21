@@ -18,6 +18,7 @@ const json = (method: string, body: unknown): RequestInit => ({
 export interface PostInput {
   title: string;
   body: string;
+  publishedAt?: number;
 }
 
 export const api = {

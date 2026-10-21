@@ -13,6 +13,7 @@ export interface Post {
   title: string;
   body: string;
   images: PostImage[];
+  publishedAt: number;
   createdAt: number;
   updatedAt: number;
 }

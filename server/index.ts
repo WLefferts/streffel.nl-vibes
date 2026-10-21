@@ -14,7 +14,7 @@ import { makeSession, requireAuth, SESSION_MS, validSession, verifyPassword } fr
 import { config } from './config.js';
 import { db } from './db.js';
 
-interface PostRow { id: string; title: string; body: string; created_at: number; updated_at: number }
+interface PostRow { id: string; title: string; body: string; created_at: number; updated_at: number; published_at: number }
 interface ImageRow { id: string; post_id: string; name: string; ext: string; mime: string; bytes: number; width: number | null; height: number | null }
 
 const EXT: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/avif': 'avif' };
@@ -35,15 +35,18 @@ const serializeImage = (i: ImageRow) => ({
 
 function serializePost(p: PostRow) {
   const images = db.prepare('SELECT * FROM images WHERE post_id = ? ORDER BY created_at, rowid').all(p.id) as ImageRow[];
-  return { id: p.id, title: p.title, body: p.body, createdAt: p.created_at, updatedAt: p.updated_at, images: images.map(serializeImage) };
+  return { id: p.id, title: p.title, body: p.body, createdAt: p.created_at, updatedAt: p.updated_at, publishedAt: p.published_at ?? p.created_at, images: images.map(serializeImage) };
 }
 
 async function readPostInput(c: Context) {
   const data = await c.req.json().catch(() => null);
   const title = typeof data?.title === 'string' ? data.title.trim() : '';
   const body = typeof data?.body === 'string' ? data.body : '';
+  const raw = data?.publishedAt;
+  const publishedAt =
+    typeof raw === 'number' && Number.isFinite(raw) && raw > 0 && raw < Date.now() + 366 * 86_400_000 ? Math.round(raw) : null;
   if (!title || title.length > 200 || body.length > 50_000) return null;
-  return { title, body };
+  return { title, body, publishedAt };
 }
 
 // --- login rate limiting (5 failures / 15 min per client) -----------------------------------
@@ -111,7 +114,7 @@ app.post('/api/logout', (c) => {
 
 // --- posts ---------------------------------------------------------------------------------
 app.get('/api/posts', (c) => {
-  const rows = db.prepare('SELECT * FROM posts ORDER BY created_at DESC').all() as PostRow[];
+  const rows = db.prepare('SELECT * FROM posts ORDER BY published_at DESC, created_at DESC').all() as PostRow[];
   return c.json(rows.map(serializePost));
 });
 
@@ -125,7 +128,7 @@ app.post('/api/posts', auth, async (c) => {
   if (!input) return c.json({ error: 'A title is required' }, 400);
   const id = randomUUID();
   const now = Date.now();
-  db.prepare('INSERT INTO posts (id, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?)').run(id, input.title, input.body, now, now);
+  db.prepare('INSERT INTO posts (id, title, body, created_at, updated_at, published_at) VALUES (?, ?, ?, ?, ?, ?)').run(id, input.title, input.body, now, now, input.publishedAt ?? now);
   return c.json(serializePost(db.prepare('SELECT * FROM posts WHERE id = ?').get(id) as PostRow), 201);
 });
 
@@ -133,7 +136,7 @@ app.put('/api/posts/:id', auth, async (c) => {
   const input = await readPostInput(c);
   if (!input) return c.json({ error: 'A title is required' }, 400);
   const id = c.req.param('id');
-  const res = db.prepare('UPDATE posts SET title = ?, body = ?, updated_at = ? WHERE id = ?').run(input.title, input.body, Date.now(), id);
+  const res = db.prepare('UPDATE posts SET title = ?, body = ?, updated_at = ?, published_at = ? WHERE id = ?').run(input.title, input.body, Date.now(), input.publishedAt ?? Date.now(), id);
   if (!res.changes) return c.json({ error: 'Post not found' }, 404);
   return c.json(serializePost(db.prepare('SELECT * FROM posts WHERE id = ?').get(id) as PostRow));
 });

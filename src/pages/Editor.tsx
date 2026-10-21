@@ -5,6 +5,7 @@ import { useAuth } from '../auth';
 import type { PostImage } from '../types';
 
 const fileKey = (f: File) => `${f.name}-${f.size}-${f.lastModified}`;
+const toLocalInput = (ms: number) => new Date(ms - new Date(ms).getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
 
 export default function Editor() {
   const { id } = useParams();
@@ -13,6 +14,7 @@ export default function Editor() {
 
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
+  const [publishedAt, setPublishedAt] = useState(() => toLocalInput(Date.now()));
   const [existing, setExisting] = useState<PostImage[]>([]);
   const [removed, setRemoved] = useState<PostImage[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -29,6 +31,7 @@ export default function Editor() {
       .then((p) => {
         setTitle(p.title);
         setBody(p.body);
+        setPublishedAt(toLocalInput(p.publishedAt));
         setExisting(p.images);
         setReady(true);
       })
@@ -48,7 +51,8 @@ export default function Editor() {
     try {
       // If an earlier attempt created the post but an upload failed, keep updating that same post.
       const targetId = id ?? createdId;
-      const post = targetId ? await api.updatePost(targetId, { title, body }) : await api.createPost({ title, body });
+      const input = { title, body, publishedAt: publishedAt ? new Date(publishedAt).getTime() : undefined };
+      const post = targetId ? await api.updatePost(targetId, input) : await api.createPost(input);
       setCreatedId(post.id);
 
       for (const file of [...files]) {
@@ -84,6 +88,12 @@ export default function Editor() {
       <label>
         Title
         <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} required />
+      </label>
+
+      <label>
+        Date and time
+        <input type="datetime-local" value={publishedAt} onChange={(e) => setPublishedAt(e.target.value)} required />
+        <small>The feed is sorted by this. Set it to when you took the photo, or leave it as now.</small>
       </label>
 
       <label>
