@@ -53,7 +53,8 @@ main { width: 100%; }
 .gallery a { display: block; flex: 1 1 0; min-width: 0; overflow: hidden; border-radius: 6px; }
 .gallery img { display: block; width: 100%; height: auto; max-width: none; margin: 0; aspect-ratio: 4 / 3; object-fit: cover; }
 .thumbs img { width: 100%; max-width: 360px; height: auto; margin-top: 16px; }
-.gallery[data-layout='1'] a { flex: 0 1 80%; }
+.gallery[data-layout='1'] a,
+.gallery[data-layout='2'] a { flex: 0 1 calc((100% - 24px) / 3); }
 .gallery[data-layout='1'] img { aspect-ratio: auto; max-height: 85vh; object-fit: contain; }
 
 .notice, .error { margin: 32px auto; }
