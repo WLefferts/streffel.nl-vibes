@@ -49,17 +49,12 @@ main { width: 100%; }
 
 .date { opacity: 0.7; font-size: 0.9rem; }
 
-.gallery { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; width: 100%; margin-top: 8px; }
-.gallery a { display: block; grid-column: span 3; overflow: hidden; border-radius: 6px; }
+.gallery { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 12px; width: 100%; margin-top: 8px; }
+.gallery a { display: block; flex: 1 1 0; min-width: 0; overflow: hidden; border-radius: 6px; }
 .gallery img { display: block; width: 100%; height: auto; max-width: none; margin: 0; aspect-ratio: 4 / 3; object-fit: cover; }
 .thumbs img { width: 100%; max-width: 360px; height: auto; margin-top: 16px; }
-.gallery[data-layout='1'] a { grid-column: span 6; }
+.gallery[data-layout='1'] a { flex: 0 1 80%; }
 .gallery[data-layout='1'] img { aspect-ratio: auto; max-height: 85vh; object-fit: contain; }
-.gallery[data-layout='3'] a:first-child,
-.gallery[data-layout='5'] a:first-child { grid-column: span 6; }
-.gallery[data-layout='3'] a:first-child img,
-.gallery[data-layout='5'] a:first-child img { aspect-ratio: 16 / 9; }
-.gallery[data-layout='many'] a { grid-column: span 2; }
 
 .notice, .error { margin: 32px auto; }
 .error { color: #ff8a8a; }
@@ -106,8 +101,5 @@ footer { margin: 32px 0; opacity: 0.5; font-size: 0.85rem; }
 @media (max-width: 820px) {
   body { margin: 0; }
   p, h1, label { max-width: 90%; }
-}
-@media (max-width: 600px) {
-  .gallery[data-layout] a:nth-child(n) { grid-column: span 6; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
