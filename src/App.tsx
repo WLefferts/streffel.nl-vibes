@@ -16,10 +16,9 @@ export default function App() {
           <Link to="/">Welcome to Streffel's Space Blog</Link>
         </h1>
         <p>
-          Here, you'll find stunning images of space, captured through a telescope, showcasing the wonders that float
-          above us.
+          Here, you'll find stunning images of space that I have captured through a telescope, showcasing the wonders that float above us.
         </p>
-        <p>Take a moment to explore and enjoy the beauty of the cosmos.</p>
+        <p>Take a moment to explore and enjoy the beauty of the cosmos. Click on any image to view it in full resolution.</p>
         {isOwner && (
           <nav className="admin-bar">
             <Link className="btn" to="/new">New post</Link>

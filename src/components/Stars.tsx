@@ -31,7 +31,8 @@ export default function Stars() {
       shooter.speed = Math.random() * 10 + 6;
       shooter.alpha = 1;
     };
-    resetShooter();
+    const shooterDelay = () => 5000 + Math.random() * 10000;
+    let nextShooterAt = performance.now() + shooterDelay();
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let raf = 0;
@@ -53,17 +54,25 @@ export default function Stars() {
       }
 
       if (!reduceMotion) {
-        shooter.x += shooter.speed * Math.cos(angle);
-        shooter.y += shooter.speed * Math.sin(angle);
-        shooter.alpha -= 0.01;
-        if (shooter.alpha <= 0) resetShooter();
-        ctx.globalAlpha = shooter.alpha;
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(shooter.x, shooter.y);
-        ctx.lineTo(shooter.x - shooter.len * Math.cos(angle), shooter.y - shooter.len * Math.sin(angle));
-        ctx.stroke();
+        if (shooter.alpha > 0) {
+          shooter.x += shooter.speed * Math.cos(angle);
+          shooter.y += shooter.speed * Math.sin(angle);
+          shooter.alpha -= 0.01;
+          if (shooter.alpha <= 0) {
+            shooter.alpha = 0;
+            nextShooterAt = performance.now() + shooterDelay();
+          } else {
+            ctx.globalAlpha = shooter.alpha;
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(shooter.x, shooter.y);
+            ctx.lineTo(shooter.x - shooter.len * Math.cos(angle), shooter.y - shooter.len * Math.sin(angle));
+            ctx.stroke();
+          }
+        } else if (performance.now() >= nextShooterAt) {
+          resetShooter();
+        }
       }
       ctx.globalAlpha = 1;
       raf = requestAnimationFrame(frame);
