@@ -44,7 +44,6 @@ body {
 
 h1, p, label, time {
   width: 100%;
-  max-width: none;
   margin: 0;
 }
 
@@ -96,7 +95,6 @@ main {
 .content {
   width: 100%;
   margin: 0 0 60px;
-  padding: 0;
 }
 
 article.content {
@@ -108,7 +106,6 @@ article.content {
   padding: clamp(20px, 3vw, 30px);
   border: 1px solid rgba(196, 168, 255, 0.2);
   border-radius: 12px;
-  background: transparent;
 }
 
 .content h1 {
@@ -162,8 +159,6 @@ article.content {
   display: block;
   width: 100%;
   height: auto;
-  max-width: none;
-  margin: 0;
   aspect-ratio: 4 / 3;
   object-fit: cover;
   transition: opacity 180ms ease, transform 220ms ease;
@@ -191,7 +186,6 @@ article.content {
   display: block;
   width: 100%;
   height: auto;
-  margin: 0;
   border-radius: 6px;
 }
 
