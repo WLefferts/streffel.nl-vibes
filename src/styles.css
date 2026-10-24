@@ -83,13 +83,13 @@ main {
 
 .intro h1 {
   max-width: 900px;
-  font-size: clamp(2.5rem, 6vw, 4.25rem);
+  font-size: clamp(2rem, 5vw, 3.5rem);
   text-shadow: 0 0 32px rgba(159, 130, 255, 0.28);
 }
 
 .intro p {
   color: #d9d3e8;
-  font-size: clamp(1.125rem, 1.8vw, 1.4rem);
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
 }
 
 .content {
@@ -216,7 +216,11 @@ footer .look-up {
 }
 
 footer a {
-  color: var(--muted);
+  color: #000;
+}
+
+footer a:hover {
+  color: #000;
 }
 
 .admin-bar,

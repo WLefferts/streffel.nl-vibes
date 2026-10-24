@@ -38,8 +38,8 @@ export default function App() {
       </main>
 
       <footer>
-        {!isOwner && <Link to="/login">Log in</Link>}
         <p className="look-up">Remeber to look up</p>
+        {!isOwner && <Link to="/login">Log in</Link>}
       </footer>
     </>
   );
