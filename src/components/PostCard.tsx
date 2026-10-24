@@ -40,8 +40,6 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
   const [busy, setBusy] = useState(false);
   const when = new Date(post.publishedAt);
   const date = when.toLocaleDateString('en-GB', { dateStyle: 'long' });
-  const n = post.images.length;
-  const layout = n >= 6 ? 'many' : String(n);
 
   async function handleDelete() {
     if (!confirm('Delete this post and its images?')) return;
@@ -61,7 +59,7 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
       <h1>{post.title}</h1>
       <time className="date" dateTime={when.toISOString()}>{date}</time>
       {renderBody(post.body)}
-      <div className="gallery" data-layout={layout}>
+      <div className="gallery">
         {post.images.map((img) => (
           <a key={img.id} href={img.url} target="_blank" rel="noreferrer" title="Open full quality">
             <img

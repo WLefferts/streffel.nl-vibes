@@ -37,11 +37,10 @@ export default function App() {
         </Routes>
       </main>
 
-      {!isOwner && (
-        <footer>
-          <Link to="/login">Log in</Link>
-        </footer>
-      )}
+      <footer>
+        {!isOwner && <Link to="/login">Log in</Link>}
+        <p className="look-up">Remeber to look up</p>
+      </footer>
     </>
   );
 }
